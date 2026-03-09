@@ -1,0 +1,136 @@
+openapi: 3.0.3
+info:
+  title: Person Service API
+  description: API voor het aanmaken en beheren van personen.
+  version: 1.0.0
+
+paths:
+  /person:
+    post:
+      operationId: createPerson
+      summary: Maak een nieuw persoon aan
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreatePersonRequest"
+            example:
+              firstName: Jan
+              lastName: De Vries
+              phoneNumber: "+31612345678"
+              address:
+                street: Keizersgracht 1
+                city: Amsterdam
+                postalCode: 1015AA
+                country: NL
+      responses:
+        "201":
+          description: Persoon succesvol aangemaakt.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PersonResponse"
+        "400":
+          description: Ongeldige request body (JSON parse error of validatiefout).
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                invalidJson:
+                  summary: Ongeldige JSON
+                  value:
+                    message: Invalid JSON body
+                validationError:
+                  summary: Validatiefout
+                  value:
+                    message: "First name is required"
+        "500":
+          description: Onverwachte serverfout.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                message: Internal server error
+
+components:
+  schemas:
+    Address:
+      type: object
+      required:
+        - street
+        - city
+        - postalCode
+        - country
+      properties:
+        street:
+          type: string
+          minLength: 1
+          example: Keizersgracht 1
+        city:
+          type: string
+          minLength: 1
+          example: Amsterdam
+        postalCode:
+          type: string
+          minLength: 1
+          example: 1015AA
+        country:
+          type: string
+          minLength: 1
+          example: NL
+
+    CreatePersonRequest:
+      type: object
+      required:
+        - firstName
+        - lastName
+        - phoneNumber
+        - address
+      properties:
+        firstName:
+          type: string
+          minLength: 1
+          example: Jan
+        lastName:
+          type: string
+          minLength: 1
+          example: De Vries
+        phoneNumber:
+          type: string
+          pattern: '^\+?[1-9]\d{1,14}$'
+          description: E.164 telefoonnummer
+          example: "+31612345678"
+        address:
+          $ref: "#/components/schemas/Address"
+
+    PersonResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440000
+        firstName:
+          type: string
+          example: Jan
+        lastName:
+          type: string
+          example: De Vries
+        phoneNumber:
+          type: string
+          example: "+31612345678"
+        address:
+          $ref: "#/components/schemas/Address"
+        createdAt:
+          type: string
+          format: date-time
+          example: "2026-03-09T12:00:00.000Z"
+
+    ErrorResponse:
+      type: object
+      properties:
+        message:
+          type: string
