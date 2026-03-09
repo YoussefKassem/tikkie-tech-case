@@ -4,10 +4,8 @@ import { buildCreatePersonHandlerDependencies } from "./create-person-handler.de
 import { RequestLogger } from "./request-logger";
 
 /**
- * Lambda handler for `POST /person`.
- * Parses the JSON body, delegates to {@link CreatePersonUseCase}, and returns the created person.
- * Emits a single wide structured event per request for observability.
- * @returns 201 on success, 400 on validation/parse errors, 500 on unexpected errors.
+ * Factory that creates a `POST /person` handler with pre-wired dependencies.
+ * @returns 201 with the created person, 400 on invalid JSON or validation errors, 500 on unexpected failures.
  */
 export const createHandler =
 	({ useCase }: CreatePersonHandlerDependencies) =>
@@ -78,13 +76,19 @@ export const createHandler =
 		}
 	};
 
+/** Cached handler instance, initialized on first invocation and reused across warm starts. */
 let handlerDelegate:
 	| ((event: APIGatewayProxyEvent) => Promise<APIGatewayProxyResult>)
 	| undefined;
 
+/** Lambda entry point. Lazily builds dependencies on cold start, then delegates to {@link createHandler}. */
 export const handler = async (
 	event: APIGatewayProxyEvent,
 ): Promise<APIGatewayProxyResult> => {
-	handlerDelegate ??= createHandler(buildCreatePersonHandlerDependencies());
+	if (!handlerDelegate) {
+		const dependencies = buildCreatePersonHandlerDependencies();
+		handlerDelegate = createHandler(dependencies);
+	}
+
 	return handlerDelegate(event);
 };
