@@ -1,0 +1,32 @@
+{
+  "name": "person-service",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "deploy": "npx cdk deploy",
+    "diff": "npx cdk diff",
+    "synth": "npx cdk synth"
+  },
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.700.0",
+    "@aws-sdk/client-eventbridge": "^3.700.0",
+    "@aws-sdk/lib-dynamodb": "^3.700.0",
+    "aws-cdk-lib": "^2.170.0",
+    "constructs": "^10.4.2",
+    "zod": "^3.24.0"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.0",
+    "@types/aws-lambda": "^8.10.145",
+    "@types/node": "^20.17.0",
+    "aws-cdk": "^2.170.0",
+    "esbuild": "^0.24.0",
+    "typescript": "^5.7.0",
+    "vitest": "^2.1.0"
+  }
+}
