@@ -20,10 +20,9 @@ export class CreatePersonUseCase {
 	 */
 	async execute(command: CreatePersonCommand): Promise<Person> {
 		const person = Person.create(command);
+		const event = PersonCreatedEvent.fromPerson(person);
 
 		await this.personRepository.save(person);
-
-		const event = PersonCreatedEvent.fromPerson(person);
 		await this.eventPublisher.publish(event);
 
 		return person;
