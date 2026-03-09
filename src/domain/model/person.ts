@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { z } from "zod";
-import { Address, type AddressProps, AddressSchema } from "./address";
+import { Address, AddressSchema } from "./address";
 
 const PHONE_REGEX = /^\+?[1-9]\d{1,14}$/;
 
@@ -11,12 +11,7 @@ export const PersonPropsSchema = z.object({
 	address: AddressSchema,
 });
 
-export interface CreatePersonProps {
-	firstName: string;
-	lastName: string;
-	phoneNumber: string;
-	address: AddressProps;
-}
+export type CreatePersonProps = z.infer<typeof PersonPropsSchema>;
 
 /** Aggregate root representing a person. Immutable after creation. */
 export class Person {
