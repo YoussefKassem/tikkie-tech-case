@@ -3,13 +3,13 @@ import type { PersonRepository } from "../../src/domain/repository/person-reposi
 
 /** In-memory fake of {@link PersonRepository} for testing. Stores persons in a Map. */
 export class InMemoryPersonRepository implements PersonRepository {
-  private readonly store = new Map<string, Person>();
+	private readonly store = new Map<string, Person>();
 
-  async save(person: Person): Promise<void> {
-    this.store.set(person.id, person);
-  }
+	async save(person: Person): Promise<void> {
+		this.store.set(person.id, person);
+	}
 
-  async findById(id: string): Promise<Person | null> {
-    return this.store.get(id) ?? null;
-  }
+	async findById(id: string): Promise<Person | null> {
+		return this.store.get(id) ?? null;
+	}
 }
